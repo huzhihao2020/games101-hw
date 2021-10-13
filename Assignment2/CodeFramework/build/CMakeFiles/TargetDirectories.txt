@@ -1,3 +1,3 @@
-/home/cs18/Desktop/Assignment2/CodeFramework/build/CMakeFiles/rebuild_cache.dir
-/home/cs18/Desktop/Assignment2/CodeFramework/build/CMakeFiles/Rasterizer.dir
-/home/cs18/Desktop/Assignment2/CodeFramework/build/CMakeFiles/edit_cache.dir
+/Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/build/CMakeFiles/rebuild_cache.dir
+/Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/build/CMakeFiles/edit_cache.dir
+/Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/build/CMakeFiles/Rasterizer.dir

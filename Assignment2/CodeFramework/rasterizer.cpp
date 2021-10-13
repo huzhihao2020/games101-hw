@@ -46,7 +46,7 @@ auto to_vec4(const Eigen::Vector3f& v3, float w = 1.0f)
 static bool insideTriangle(float x, float y, const Vector3f* _v)
 {   
     // TODO : Implement this function to check if the point (x, y) is inside the triangle represented by _v[0], _v[1], _v[2]
-    // added bu user
+    // added by user, cross product
     // Done
     x += 0.5;
     y += 0.5;
@@ -219,6 +219,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
             }
         }
     }
+    // 不进行msaa，输出图像物体边缘会有锯齿感
     else
     {
         for(int j = y2; j >= y1; j--)
