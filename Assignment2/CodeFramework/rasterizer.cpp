@@ -14,7 +14,7 @@ using namespace std;
 
 rst::pos_buf_id rst::rasterizer::load_positions(const std::vector<Eigen::Vector3f> &positions)
 {
-    auto id = get_next_id();
+    auto id = get_next_id(); // 利用 rst类的成员函数，维护了一个全局变量记录id
     pos_buf.emplace(id, positions);
 
     return {id};
@@ -78,7 +78,7 @@ static std::tuple<float, float, float> computeBarycentric2D(float x, float y, co
 
 void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf_id col_buffer, Primitive type)
 {
-    auto& buf = pos_buf[pos_buffer.pos_id];
+    auto& buf = pos_buf[pos_buffer.pos_id]; // 为什么传个pos进来要这么费劲， 这样的好处？
     auto& ind = ind_buf[ind_buffer.ind_id];
     auto& col = col_buf[col_buffer.col_id];
 
@@ -96,7 +96,7 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
                 mvp * to_vec4(buf[i[2]], 1.0f)
         };
 
-        //v.w() is exactly the z-value in view space
+        //Print v, v.w() is exactly the z-value in view space
         for(auto idx : {0,1,2})
         {
             std::cout << "v" << idx << " | "<< v[idx].x()
@@ -120,7 +120,7 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
 
         for (int i = 0; i < 3; ++i)
         {
-            t.setVertex(i, v[i].head<3>());
+            t.setVertex(i, v[i].head<3>()); //为啥做三次？
             t.setVertex(i, v[i].head<3>());
             t.setVertex(i, v[i].head<3>());
         }
@@ -129,6 +129,7 @@ void rst::rasterizer::draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf
         auto col_y = col[i[1]];
         auto col_z = col[i[2]];
 
+        // 将顶点的颜色信息存储在 triangle 对象 t 中。
         t.setColor(0, col_x[0], col_x[1], col_x[2]);
         t.setColor(1, col_y[0], col_y[1], col_y[2]);
         t.setColor(2, col_z[0], col_z[1], col_z[2]);
@@ -150,16 +151,8 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
 
     // TODO : Find out the bounding box of current triangle.
     // iterate through the pixel and find if the current pixel is inside the triangle
-    //added by user
-
-    //check vertex coordinates
-    // for(auto idx : {0,1,2})
-    // {
-    //     std::cout << "pt" << idx << " | "<< v[idx].x()
-    //                              << " | "<< v[idx].y()
-    //                              << " | "<< v[idx].z()
-    //                              << " | "<< v[idx].w() << std::endl;
-    // }
+   
+    // added by user, Bounding box
 
     int x1, x2, y1, y2;
     x1 = std::floor(std::min(v[0].x(), std::min(v[1].x(), v[2].x())));
@@ -182,6 +175,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
                 int in_sum = 0;
                 float pos[2] = {0.25, 0.75};
                 
+                // 2x2 的超采样，每个像素格均分成四个像素格，注意这里因为像素翻了4倍，相应的buffer也要翻4倍，比如 frame_buf 和 depth_buf
                 for(auto x_sup:{0,1})
                 {
                     for(auto y_sup:{0,1})
@@ -204,14 +198,17 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
                         }
                     }
                 }
-
+                
+                // 根据子采样的颜色决定[i][j]像素点的颜色，注意这里选择将颜色 add 到原颜色上，而不是set的原因：
+                // 加入物体重叠， set 会导致黑边， add会使用两者的差值，使得边缘颜色很和谐，原因如下：
+                // 先画后面的蓝色三角形，再画前面的绿色三角形，前面的三角形把后面的被覆盖掉，边界的像素重新set值，相当于采样了黑色背景的颜色(0,0,0)进行混合，导致边界线颜色比较浅，其实不是黑线
                 if(in_sum>0)
                 {
                     // If so, use the following code to get the interpolated z value.
           
                     // if lower z, update depth_buf
 
-                    add_pixel(Vector3f(i, j, 1.0f), in_sum*t.getColor()/4.0f);
+                    add_pixel(Vector3f(i, j, 1.0f), in_sum * t.getColor()/4.0f);
 
                     
                 }
@@ -241,7 +238,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
                     
                     if(z_interpolated < depth_buf[get_index(i, j)])
                     {
-                        set_pixel(Vector3f(i, j, z_interpolated), t.getColor());
+                        set_pixel(Vector3f(i, j, z_interpolated), t.getColor()); // t.getColor可以变成三个顶点颜色的差值运算, 每个像素的颜色更新到frame_buf[i][j]中
                         depth_buf[get_index(i, j)] = z_interpolated;
                     }
                     
