@@ -173,9 +173,29 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
     {
         // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
         // components are. Then, accumulate that result on the *result_color* object.
-        
-    }
+        Eigen::Vector3f light_dir = light.position - point;
+        Eigen::Vector3f view_dir = eye_pos - point;
+        float r_square = view_dir.dot(light_dir);
+        auto light_dir_norm = light_dir.normalized();
+        auto view_dir_norm = view_dir.normalized();
+        Eigen::Vector3f h = (light_dir_norm + view_dir_norm).normalized();
 
+        float cosnl = normal.dot(view_dir_norm);
+        float cosnh = normal.dot(view_dir_norm);
+
+        auto specular = ks.cwiseProduct(light.intensity) / r_square * std::max(0.0f, std::pow(cosnl, p));
+        auto diffuse = kd.cwiseProduct(light.intensity) / r_square * std::max(0.0f, cosnh);
+        auto ambient = ka.cwiseProduct(amb_light_intensity);
+
+        result_color += specular;
+        result_color += diffuse;
+        result_color += ambient;
+        
+        // std::cout << "result_color: \n" << specular << std::endl;
+
+
+    }
+    // result_color.normalize();
     return result_color * 255.f;
 }
 
@@ -273,7 +293,7 @@ int main(int argc, const char** argv)
 {
     std::vector<Triangle*> TriangleList;
 
-    float angle = 40.0;
+    float angle = 140.0;
     bool command_line = false;
 
     std::string filename = "output.png";

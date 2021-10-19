@@ -256,7 +256,7 @@ static Eigen::Vector2f interpolate(float alpha, float beta, float gamma, const E
     return Eigen::Vector2f(u, v);
 }
 
-//Screen space rasterization
+// Screen space rasterization
 void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eigen::Vector3f, 3>& view_pos) 
 {
     // TODO: From your HW3, get the triangle rasterization code.
@@ -298,16 +298,18 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                 float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
                 float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                 z_interpolated *= w_reciprocal;
-                // color, normal, texcoord
-                auto interpolated_color = interpolate(alpha, beta, gamma, t.color[0], t.color[1], t.color[2], 1.0);
-                auto interpolated_normal = interpolate(alpha, beta, gamma, t.normal[0], t.normal[1], t.normal[2], 1.0);
-                auto interpolated_texcoords = interpolate(alpha, beta, gamma, t.tex_coords[0], t.tex_coords[1], t.tex_coords[2], 1.0);
-                fragment_shader_payload payload(interpolated_color, interpolated_normal.normalized(), interpolated_texcoords, texture ? &*texture : nullptr);
-                // payload.view_pos = interpolated_shadingcoords;
-                
                 // if lower z, update depth_buf
                 if(z_interpolated < depth_buf[get_index(i, j)])
                 {
+                    // color, normal, texcoord
+                    auto interpolated_color = interpolate(alpha, beta, gamma, t.color[0], t.color[1], t.color[2], 1.0);
+                    auto interpolated_normal = interpolate(alpha, beta, gamma, t.normal[0], t.normal[1], t.normal[2], 1.0);
+                    auto interpolated_texcoords = interpolate(alpha, beta, gamma, t.tex_coords[0], t.tex_coords[1], t.tex_coords[2], 1.0);
+                    auto interpolated_shadingcoords = interpolate(alpha, beta, gamma, view_pos[0], view_pos[1], view_pos[2], 1.0);
+
+                    fragment_shader_payload payload(interpolated_color, interpolated_normal.normalized(), interpolated_texcoords, texture ? &*texture : nullptr);
+                    payload.view_pos = interpolated_shadingcoords;
+                    
                     // Use: Instead of passing the triangle's color directly to the frame buffer, pass the color to the shaders first to get the final color;
                     auto pixel_color = fragment_shader(payload);
                     set_pixel(Vector2i(i, j), pixel_color); // t.getColor可以变成三个顶点颜色的差值运算, 每个像素的颜色更新到frame_buf[i][j]中
@@ -318,12 +320,6 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
             }
         }
     }
-
-
-
-
-
- 
 }
 
 void rst::rasterizer::set_model(const Eigen::Matrix4f& m)
