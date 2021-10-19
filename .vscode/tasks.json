@@ -1,0 +1,28 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"type": "shell",
+		"label": "Build Assignment3",
+		"command": "/usr/bin/clang++",
+		"args": [
+		  "-std=c++17",
+		  "-stdlib=libc++",
+		  "-g",
+		  "${workspaceFolder}/Assignment3/Code/*.cpp", //多个文件可以写成 "${workspaceFolder}/*.cpp"
+		  "-o",
+		  "{workspaceFolder}/Assignment3/Code/build/main3"
+		],
+		"options": {
+		  "cwd": "${workspaceFolder}"
+		},
+		"problemMatcher": ["$gcc"],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		}
+	  }
+	]
+  }

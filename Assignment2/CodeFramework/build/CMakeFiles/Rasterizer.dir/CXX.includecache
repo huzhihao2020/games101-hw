@@ -6,31 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/Triangle.cpp
-Triangle.hpp
-/Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/Triangle.hpp
-algorithm
--
-array
--
-
 /Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/Triangle.hpp
 eigen3/Eigen/Eigen
 -
 
 /Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/global.hpp
-
-/Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/main.cpp
-iostream
--
-opencv2/opencv.hpp
--
-rasterizer.hpp
-/Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/rasterizer.hpp
-global.hpp
-/Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/global.hpp
-Triangle.hpp
-/Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/Triangle.hpp
 
 /Users/lance/code/GitHub/games101-hw/Assignment2/CodeFramework/rasterizer.cpp
 algorithm

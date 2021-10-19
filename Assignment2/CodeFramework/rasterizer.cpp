@@ -271,7 +271,6 @@ void rst::rasterizer::clear(rst::Buffers buff)
     if ((buff & rst::Buffers::Color) == rst::Buffers::Color)
     {
         std::fill(frame_buf.begin(), frame_buf.end(), Eigen::Vector3f{0, 0, 0});
-        std::fill(sup_colorbuf.begin(), sup_colorbuf.end(), Eigen::Vector3f{0, 0, 0});
     }
     if ((buff & rst::Buffers::Depth) == rst::Buffers::Depth)
     {
@@ -288,7 +287,6 @@ rst::rasterizer::rasterizer(int w, int h) : width(w), height(h)
 
     //added to use msaa
     sup_depthbuf.resize(w*h*4);
-    sup_colorbuf.resize(w*h*4);
 }
 
 int rst::rasterizer::get_index(int x, int y)

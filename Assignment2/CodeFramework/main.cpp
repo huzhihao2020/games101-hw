@@ -108,7 +108,7 @@ int main(int argc, const char** argv)
             };
     //added by user
 
-
+    // load 函数会将 pos ind cols 放进对应的 buffer，返回值依次为 0 1 2
     auto pos_id = r.load_positions(pos);
     auto ind_id = r.load_indices(ind);
     auto col_id = r.load_colors(cols);

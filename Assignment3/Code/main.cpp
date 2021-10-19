@@ -273,7 +273,7 @@ int main(int argc, const char** argv)
 {
     std::vector<Triangle*> TriangleList;
 
-    float angle = 140.0;
+    float angle = 40.0;
     bool command_line = false;
 
     std::string filename = "output.png";
@@ -296,6 +296,8 @@ int main(int argc, const char** argv)
             TriangleList.push_back(t);
         }
     }
+
+    // std::cout << "TriangleList size: " << TriangleList.size() <<std::endl;
 
     rst::rasterizer r(700, 700);
 
@@ -342,6 +344,7 @@ int main(int argc, const char** argv)
 
     r.set_vertex_shader(vertex_shader);
     r.set_fragment_shader(active_shader);
+    // r.set_fragment_shader(normal_fragment_shader);
 
     int key = 0;
     int frame_count = 0;
@@ -380,6 +383,9 @@ int main(int argc, const char** argv)
         cv::imshow("image", image);
         cv::imwrite(filename, image);
         key = cv::waitKey(10);
+
+        std::cout << "frame_count: "<< frame_count++ << std::endl;
+        std::cout << "angle: "<< angle << std::endl;
 
         if (key == 'a' )
         {
