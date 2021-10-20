@@ -175,16 +175,17 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
         // components are. Then, accumulate that result on the *result_color* object.
         Eigen::Vector3f light_dir = light.position - point;
         Eigen::Vector3f view_dir = eye_pos - point;
-        float r_square = view_dir.dot(light_dir);
+        float r_squared = light_dir.dot(light_dir);
+
         auto light_dir_norm = light_dir.normalized();
         auto view_dir_norm = view_dir.normalized();
         Eigen::Vector3f h = (light_dir_norm + view_dir_norm).normalized();
 
-        float cosnl = normal.dot(view_dir_norm);
-        float cosnh = normal.dot(view_dir_norm);
+        float cosnl = normal.dot(light_dir_norm);
+        float cosnh = normal.dot(h);
 
-        auto specular = ks.cwiseProduct(light.intensity) / r_square * std::max(0.0f, std::pow(cosnl, p));
-        auto diffuse = kd.cwiseProduct(light.intensity) / r_square * std::max(0.0f, cosnh);
+        auto specular = ks.cwiseProduct(light.intensity) / r_squared * std::pow(std::max(0.0f, cosnh), 150);
+        auto diffuse = kd.cwiseProduct(light.intensity) / r_squared * std::max(0.0f, cosnl);
         auto ambient = ka.cwiseProduct(amb_light_intensity);
 
         result_color += specular;
@@ -409,11 +410,11 @@ int main(int argc, const char** argv)
 
         if (key == 'a' )
         {
-            angle -= 0.1;
+            angle -= 1;
         }
         else if (key == 'd')
         {
-            angle += 0.1;
+            angle += 1;
         }
 
     }

@@ -299,7 +299,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                 float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                 z_interpolated *= w_reciprocal;
                 // if lower z, update depth_buf
-                if(z_interpolated < depth_buf[get_index(i, j)])
+                if(-z_interpolated < depth_buf[get_index(i, j)])
                 {
                     // color, normal, texcoord
                     auto interpolated_color = interpolate(alpha, beta, gamma, t.color[0], t.color[1], t.color[2], 1.0);
@@ -313,7 +313,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                     // Use: Instead of passing the triangle's color directly to the frame buffer, pass the color to the shaders first to get the final color;
                     auto pixel_color = fragment_shader(payload);
                     set_pixel(Vector2i(i, j), pixel_color); // t.getColor可以变成三个顶点颜色的差值运算, 每个像素的颜色更新到frame_buf[i][j]中
-                    depth_buf[get_index(i, j)] = z_interpolated;
+                    depth_buf[get_index(i, j)] = -z_interpolated;
                     // std::cout << "updated at (i j): " << i << " " << j <<" z: "<< z_interpolated << "\ninterpolated_color: \n" << interpolated_color << "\n";
                 }
 
@@ -321,6 +321,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
         }
     }
 }
+
 
 void rst::rasterizer::set_model(const Eigen::Matrix4f& m)
 {
