@@ -24,7 +24,7 @@ Course site: [games-101](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.htm
 * Barycentric coordinates
   直到三角形顶点的属性，三角形中间的值都可以通过差值计算。 
 
-* Applying textures
+* Applying textures [Assign3]
 
 * **Texture Magnification**
   本质问题是差值结果是个非整数的 u,v 应该如何处理？
@@ -43,3 +43,8 @@ Course site: [games-101](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.htm
 * **Anisotropic Filtering** 各向异性过滤
 
 ##### Lec10 Geometry
+
+* sphereMap / Cube Map 来描述环境光
+* Bump Mapping 凹凸贴图 [Assign3]
+  不把几何形体变复杂的情况下，通过贴图处理，达到一个低模变高模的效果。基本原理是将每个点，根据相邻点的高度差，对法线进行一个扰动，从而改变光照的效果。
+
