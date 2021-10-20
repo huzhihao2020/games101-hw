@@ -6,6 +6,18 @@
 
 #IncludeRegexTransform: 
 
+/Users/lance/code/GitHub/games101-hw/Assignment3/Code/OBJ_Loader.h
+iostream
+-
+vector
+-
+string
+-
+fstream
+-
+math.h
+-
+
 /Users/lance/code/GitHub/games101-hw/Assignment3/Code/Shader.hpp
 eigen3/Eigen/Eigen
 -
@@ -28,15 +40,23 @@ Texture.hpp
 
 /Users/lance/code/GitHub/games101-hw/Assignment3/Code/global.hpp
 
-/Users/lance/code/GitHub/games101-hw/Assignment3/Code/rasterizer.cpp
-algorithm
+/Users/lance/code/GitHub/games101-hw/Assignment3/Code/main.cpp
+iostream
 -
-rasterizer.hpp
-/Users/lance/code/GitHub/games101-hw/Assignment3/Code/rasterizer.hpp
 opencv2/opencv.hpp
 -
-math.h
--
+global.hpp
+/Users/lance/code/GitHub/games101-hw/Assignment3/Code/global.hpp
+rasterizer.hpp
+/Users/lance/code/GitHub/games101-hw/Assignment3/Code/rasterizer.hpp
+Triangle.hpp
+/Users/lance/code/GitHub/games101-hw/Assignment3/Code/Triangle.hpp
+Shader.hpp
+/Users/lance/code/GitHub/games101-hw/Assignment3/Code/Shader.hpp
+Texture.hpp
+/Users/lance/code/GitHub/games101-hw/Assignment3/Code/Texture.hpp
+OBJ_Loader.h
+/Users/lance/code/GitHub/games101-hw/Assignment3/Code/OBJ_Loader.h
 
 /Users/lance/code/GitHub/games101-hw/Assignment3/Code/rasterizer.hpp
 eigen3/Eigen/Eigen
