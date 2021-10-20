@@ -115,7 +115,8 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
     if (payload.texture)
     {
         // TODO: Get the texture value at the texture coordinates of the current fragment
-        return_color = payload.texture->getColor(payload.tex_coords[0], payload.tex_coords[1]);
+        // return_color = payload.texture->getColor(payload.tex_coords[0], payload.tex_coords[1]);
+        return_color = payload.texture->getColorBilinear(payload.tex_coords[0], payload.tex_coords[1]);
         // std::cout << "color: \n" << return_color << std::endl;
 
     }
@@ -278,6 +279,7 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payl
     float dV = kh * kn * (payload.texture->getColor(u, v+1.0f/h).norm() - payload.texture->getColor(u, v).norm());;
     Eigen::Vector3f ln(-dU, -dV, 1);
     point = point + kn * n * payload.texture->getColor(u, v).norm();
+    
     normal = (TBN * ln).normalized();
 
     Eigen::Vector3f result_color = {0, 0, 0};
@@ -383,9 +385,11 @@ int main(int argc, const char** argv)
 
     std::string filename = "output.png";
     objl::Loader Loader;
+    // std::string obj_path = "../models/spot/";
     std::string obj_path = "../models/spot/";
 
     // Load .obj File
+    // bool loadout = Loader.LoadFile("../models/spot/spot_triangulated_good.obj");
     bool loadout = Loader.LoadFile("../models/spot/spot_triangulated_good.obj");
     for(auto mesh:Loader.LoadedMeshes)
     {
@@ -402,7 +406,7 @@ int main(int argc, const char** argv)
         }
     }
 
-    // std::cout << "TriangleList size: " << TriangleList.size() <<std::endl;
+    std::cout << "TriangleList size: " << TriangleList.size() <<std::endl;
 
     rst::rasterizer r(700, 700);
 
@@ -445,6 +449,7 @@ int main(int argc, const char** argv)
         }
     }
 
+    // adjust eye_pos if the obj is too big/small
     Eigen::Vector3f eye_pos = {0,0,10};
 
     r.set_vertex_shader(vertex_shader);
