@@ -2,7 +2,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-#define NUM_POINTS 8
+#define NUM_POINTS 5
 std::vector<cv::Point2f> control_points;
 
 void mouse_handler(int event, int x, int y, int flags, void *userdata) 
@@ -51,9 +51,23 @@ void bezier(const std::vector<cv::Point2f> &control_points, cv::Mat &window)
     // TODO: Iterate through all t = 0 to t = 1 with small steps, and call de Casteljau's 
     // recursive Bezier algorithm.
 
-    for(float t = 0.0; t<=1.0; t+=0.001) {
+    for(float t = 0.0; t<=1.0; t+=0.002) {
         auto point = recursive_bezier(control_points, t);
-        window.at<cv::Vec3b>(point.y, point.x)[1] = 255;
+        int x_floor = std::floor(point.x);
+        int y_floor = std::floor(point.y);
+        int x_neighbor = point.x - x_floor <= 0.5 ? x_floor-1 : x_floor+1;
+        int y_neighbor = point.y - y_floor <= 0.5 ? y_floor-1 : y_floor+1;
+        float delta_x = std::abs(point.x - x_floor - 0.5);
+        float delta_y = std::abs(point.y - y_floor - 0.5);
+        
+        window.at<cv::Vec3b>(point.y, point.x)[1]=255;
+
+        if(window.at<cv::Vec3b>(y_floor, x_neighbor)[1]==0)
+            window.at<cv::Vec3b>(y_floor, x_neighbor)[1]=255 * delta_x * 2;
+        if(window.at<cv::Vec3b>(y_neighbor, x_floor)[1]==0)
+            window.at<cv::Vec3b>(y_neighbor, x_floor)[1]=255 * delta_y * 2;
+
+        // std::cout << "point: "<< point.x << " "<< point.y << std::endl;
     }
 }
 

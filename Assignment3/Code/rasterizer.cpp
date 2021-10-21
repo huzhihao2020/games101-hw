@@ -216,7 +216,7 @@ void rst::rasterizer::draw(std::vector<Triangle *> &TriangleList) {
         {
             vert.x() = 0.5*width*(vert.x()+1.0);
             vert.y() = 0.5*height*(vert.y()+1.0);
-            vert.z() = vert.z() * f1 + f2;
+            vert.z() = -vert.z() * f1 + f2; // 为了方便，这步转换后z全变为正，并且越小
         }
 
         for (int i = 0; i < 3; ++i)
@@ -298,8 +298,12 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                 float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
                 float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                 z_interpolated *= w_reciprocal;
+                
+                // std::cout << "z_interpolated: " << z_interpolated << std::endl;
+                // std::cout << "depth_buf: " << depth_buf[get_index(i, j)] << std::endl;
+
                 // if lower z, update depth_buf
-                if(-z_interpolated < depth_buf[get_index(i, j)])
+                if(z_interpolated < depth_buf[get_index(i, j)])
                 {
                     // color, normal, texcoord
                     auto interpolated_color = interpolate(alpha, beta, gamma, t.color[0], t.color[1], t.color[2], 1.0);
@@ -313,7 +317,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                     // Use: Instead of passing the triangle's color directly to the frame buffer, pass the color to the shaders first to get the final color;
                     auto pixel_color = fragment_shader(payload);
                     set_pixel(Vector2i(i, j), pixel_color); // t.getColor可以变成三个顶点颜色的差值运算, 每个像素的颜色更新到frame_buf[i][j]中
-                    depth_buf[get_index(i, j)] = -z_interpolated;
+                    depth_buf[get_index(i, j)] = z_interpolated;
                     // std::cout << "updated at (i j): " << i << " " << j <<" z: "<< z_interpolated << "\ninterpolated_color: \n" << interpolated_color << "\n";
                 }
 
