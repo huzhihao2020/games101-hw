@@ -51,3 +51,14 @@ Course site: [games-101](https://sites.cs.ucsb.edu/~lingqi/teaching/games101.htm
 * displacement 改变模型的凹凸贴图
   与Bump  Mapping类似，不过是对point进行一个扰动
 * SDF 有向距离场函数
+
+##### Lec11 Geometry2(Curves and Surfaces)
+
+* .obj 文件的的解释
+
+* Bizier Curves 贝塞尔曲线，同理做两次贝塞尔曲线会生成贝塞尔曲面
+  n点的贝塞尔曲线一定落在这n个点的凸包内。
+
+* 简介 spline，贝塞尔曲线的缺点是，改动一个点，整条曲线都会改变。
+
+  
