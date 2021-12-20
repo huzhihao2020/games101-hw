@@ -1,12 +1,15 @@
 # previous Assignment
-Assignment0/
-Assignment1/
-Assignment2/
-Assignment3/
-Assignment4/
+/Assignment0/
+/Assignment1/
+/Assignment2/
+/Assignment3/
+/Assignment4/
 
 # build
 build/
+
+# Slides
+/Slides&Book/
 
 # .vs
 .vscode/
