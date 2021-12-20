@@ -130,6 +130,7 @@ Vector3f castRay(
     }
 
     Vector3f hitColor = scene.backgroundColor;
+    // 调用 trace()查询光线与最近物体的交点，并将context保存在payload中，可以看trace的注释
     if (auto payload = trace(orig, dir, scene.get_objects()); payload)
     {
         Vector3f hitPoint = orig + dir * payload->tNear;
@@ -166,7 +167,7 @@ Vector3f castRay(
             default:
             {
                 // [comment]
-                // We use the Phong illumation model int the default case. The phong model
+                // We use the Phong illumation model in the default case. The phong model
                 // is composed of a diffuse and a specular reflection component.
                 // [/comment]
                 Vector3f lightAmt = 0, specularColor = 0;
@@ -191,7 +192,7 @@ Vector3f castRay(
                     Vector3f reflectionDirection = reflect(-lightDir, N);
 
                     specularColor += powf(std::max(0.f, -dotProduct(reflectionDirection, dir)),
-                        payload->hit_obj->specularExponent) * light->intensity;
+                    payload->hit_obj->specularExponent) * light->intensity;
                 }
 
                 hitColor = lightAmt * payload->hit_obj->evalDiffuseColor(st) * payload->hit_obj->Kd + specularColor * payload->hit_obj->Ks;
@@ -228,9 +229,16 @@ void Renderer::Render(const Scene& scene)
             // TODO: Find the x and y positions of the current pixel to get the direction
             // vector that passes through it.
             // Also, don't forget to multiply both of them with the variable *scale*, and
-            // x (horizontal) variable with the *imageAspectRatio*            
+            // x (horizontal) variable with the *imageAspectRatio*
 
+            // why * scale * imageAspectRatio?
+            // camera 的 fov 和 aspectRatio 决定了 frustum 的形状，成像平面默认为(z=-1)           
+            x = (2.0f * i)/scene.width - 1;
+            x = x * scale * imageAspectRatio;
+            y = 1 - (2.0f * j)/scene.height;
+            y *= scale;
             Vector3f dir = Vector3f(x, y, -1); // Don't forget to normalize this direction!
+            normalize(dir);
             framebuffer[m++] = castRay(eye_pos, dir, scene, 0);
         }
         UpdateProgress(j / (float)scene.height);
@@ -241,9 +249,9 @@ void Renderer::Render(const Scene& scene)
     (void)fprintf(fp, "P6\n%d %d\n255\n", scene.width, scene.height);
     for (auto i = 0; i < scene.height * scene.width; ++i) {
         static unsigned char color[3];
-        color[0] = (char)(255 * clamp(0, 1, framebuffer[i].x));
-        color[1] = (char)(255 * clamp(0, 1, framebuffer[i].y));
-        color[2] = (char)(255 * clamp(0, 1, framebuffer[i].z));
+        color[0] = (unsigned char)(255 * clamp(0, 1, framebuffer[i].x));
+        color[1] = (unsigned char)(255 * clamp(0, 1, framebuffer[i].y));
+        color[2] = (unsigned char)(255 * clamp(0, 1, framebuffer[i].z));
         fwrite(color, 1, 3, fp);
     }
     fclose(fp);    

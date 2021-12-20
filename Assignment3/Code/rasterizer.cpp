@@ -188,6 +188,7 @@ void rst::rasterizer::draw(std::vector<Triangle *> &TriangleList) {
 
         std::array<Eigen::Vector3f, 3> viewspace_pos;
 
+        // viewspace_pos 是 视空间坐标，因为光线计算要在视空间进行
         std::transform(mm.begin(), mm.end(), viewspace_pos.begin(), [](auto& v) {
             return v.template head<3>();
         });
@@ -197,6 +198,7 @@ void rst::rasterizer::draw(std::vector<Triangle *> &TriangleList) {
                 mvp * t->v[1],
                 mvp * t->v[2]
         };
+
         //Homogeneous division
         for (auto& vec : v) {
             vec.x()/=vec.w();
@@ -204,6 +206,7 @@ void rst::rasterizer::draw(std::vector<Triangle *> &TriangleList) {
             vec.z()/=vec.w();
         }
 
+        // ?
         Eigen::Matrix4f inv_trans = (view * model).inverse().transpose();
         Eigen::Vector4f n[] = {
                 inv_trans * to_vec4(t->normal[0], 0.0f),
@@ -270,7 +273,14 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
     // zp *= Z;
 
     // copied from ass2 
-    auto v = t.toVector4();
+    auto v = t.toVector4(); 
+
+    Eigen::Vector4f v1[] = {
+                Eigen::Vector4f(view_pos[0][0], view_pos[0][1], view_pos[0][2], 1.f),
+                Eigen::Vector4f(view_pos[1][0], view_pos[1][1], view_pos[1][2], 1.f),
+                Eigen::Vector4f(view_pos[2][0], view_pos[2][1], view_pos[2][2], 1.f)
+    };
+
     int x1, x2, y1, y2;
     x1 = std::floor(std::min(v[0].x(), std::min(v[1].x(), v[2].x())));
     x2 = std::ceil(std::max(v[0].x(), std::max(v[1].x(), v[2].x())));
@@ -294,7 +304,18 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                 // auto interpolated_texcoords
                 // auto interpolated_shadingcoords
                 float alpha, beta, gamma;
+                float alpha1, beta1, gamma1;
+
+                // 框架的问题：插值计算过程应该由视空间的坐标计算，而这里的 t.v 是经过mvp变换后的坐标，即投影空间的坐标;
+                // 而 view_pos 只经过 mv 变换，是视空间 坐标，故对重心插值的计算应该用 view_pos
                 std::tie(alpha, beta, gamma) = computeBarycentric2D(i, j, t.v);
+
+
+                std::cout<< "alpha: "<< alpha << " " << alpha1 << std::endl;
+                std::cout<< "beta: "<< beta << " " << beta1 << std::endl;
+                std::cout<< "gamma: "<< gamma << " " << gamma1 << std::endl;
+
+                // 框架的问题：根据论文，这里的v[i].w()应该表示视空间的深度z，但是这里的w恒设为了1，而且此时的t.v已经经过了mvp变换，是压缩后的投影空间，有误差
                 float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
                 float z_interpolated = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                 z_interpolated *= w_reciprocal;
@@ -306,6 +327,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                 if(z_interpolated < depth_buf[get_index(i, j)])
                 {
                     // color, normal, texcoord
+                    
                     auto interpolated_color = interpolate(alpha, beta, gamma, t.color[0], t.color[1], t.color[2], 1.0);
                     auto interpolated_normal = interpolate(alpha, beta, gamma, t.normal[0], t.normal[1], t.normal[2], 1.0);
                     auto interpolated_texcoords = interpolate(alpha, beta, gamma, t.tex_coords[0], t.tex_coords[1], t.tex_coords[2], 1.0); // u,v

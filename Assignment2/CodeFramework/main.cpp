@@ -59,6 +59,8 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float z
 
     std::cout << "projection" << std::endl
               << projection << std::endl;
+    std::cout << "ortho" << std::endl
+    << M_o_scale * M_o_trans << std::endl;
 
     return projection;
 }

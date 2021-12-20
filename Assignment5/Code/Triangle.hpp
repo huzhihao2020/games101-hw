@@ -11,6 +11,25 @@ bool rayTriangleIntersect(const Vector3f& v0, const Vector3f& v1, const Vector3f
     // that's specified bt v0, v1 and v2 intersects with the ray (whose
     // origin is *orig* and direction is *dir*)
     // Also don't forget to update tnear, u and v.
+
+    // use Moller-Trumbore Algorithm to get [tnear, u, v]
+    auto vec3_e1 = v1 - v0;
+    auto vec3_e2 = v2 - v0;
+    auto vec3_s = orig - v0;
+    auto vec3_s1 = crossProduct(dir, vec3_e2);
+    auto vec3_s2 = crossProduct(vec3_s, vec3_e1);
+    
+    auto denom = dotProduct(vec3_s1, vec3_e1);
+    auto denom_inv = 1.0f / denom;
+
+    // inside Triangle
+    tnear = dotProduct(vec3_s2, vec3_e2) * denom_inv;
+    u = dotProduct(vec3_s1, vec3_s) * denom_inv;
+    v = dotProduct(vec3_s2, dir) * denom_inv;
+
+    if((tnear>0)&&(u>0)&&(v>0)&&(1-u-v)>0) 
+        return true;
+
     return false;
 }
 
@@ -52,7 +71,6 @@ public:
                 intersect |= true;
             }
         }
-
         return intersect;
     }
 
