@@ -123,6 +123,7 @@ public:
         for (auto& tri : triangles)
             ptrs.push_back(&tri);
 
+        // std::cout << triangles.size() << std::endl;
         bvh = new BVHAccel(ptrs);
     }
 
@@ -230,11 +231,16 @@ inline Intersection Triangle::getIntersection(Ray ray)
     if (v < 0 || u + v > 1)
         return inter;
     t_tmp = dotProduct(e2, qvec) * det_inv;
+    if(t_tmp < 0)
+        return inter;
 
     // TODO find ray triangle intersection
-
-
-
+    inter.happened = true;
+    inter.coords = ray(t_tmp);
+    inter.normal = normal;
+    inter.distance = t_tmp;
+    inter.obj = this;
+    inter.m=m;
 
     return inter;
 }

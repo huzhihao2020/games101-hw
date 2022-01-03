@@ -206,7 +206,10 @@ void rst::rasterizer::draw(std::vector<Triangle *> &TriangleList) {
             vec.z()/=vec.w();
         }
 
-        // ?
+        // 逆转置？法线变换矩阵
+        // https://zhuanlan.zhihu.com/p/72734738
+        // https://blog.csdn.net/Qinhaifu/article/details/102476692
+        // inv_trans 是把法线从local(model) space变换到view space的变换矩阵
         Eigen::Matrix4f inv_trans = (view * model).inverse().transpose();
         Eigen::Vector4f n[] = {
                 inv_trans * to_vec4(t->normal[0], 0.0f),

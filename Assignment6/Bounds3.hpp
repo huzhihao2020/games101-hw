@@ -54,6 +54,7 @@ class Bounds3
                                 fmin(pMax.z, b.pMax.z)));
     }
 
+    // get the relative coords (0,1) for p in the box
     Vector3f Offset(const Vector3f& p) const
     {
         Vector3f o = p - pMin;
@@ -96,7 +97,30 @@ inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
     // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), use this because Multiply is faster that Division
     // dirIsNeg: ray direction(x,y,z), dirIsNeg=[int(x>0),int(y>0),int(z>0)], use this to simplify your logic
     // TODO test if ray bound intersects
-    
+
+    // 根绝三组平面与光线求交，求出三组t的区间，求交集
+    auto txMin = (pMin.x - ray.origin.x) * invDir.x;
+    auto txMax = (pMax.x - ray.origin.x) * invDir.x;
+    auto tyMin = (pMin.y - ray.origin.y) * invDir.y;
+    auto tyMax = (pMax.y - ray.origin.y) * invDir.y;
+    auto tzMin = (pMin.z - ray.origin.z) * invDir.z;
+    auto tzMax = (pMax.z - ray.origin.z) * invDir.z;
+
+    if(txMin > txMax) std::swap(txMin, txMax);
+    if(tyMin > tyMax) std::swap(tyMin, tyMax);
+    if(tzMin > tzMax) std::swap(tzMin, tzMax);
+
+    auto tmin = std::max(std::max(txMin, tyMin), tzMin);
+    auto tmax = std::min(std::min(txMax, tyMax), tzMax);
+
+    // if(std::rand()/5 > std::rand()) {
+    //     std::cout << tmin << " "<< tmax << std::endl;
+    // }
+
+    if(tmin < tmax)
+        return true;
+
+    return false;
 }
 
 inline Bounds3 Union(const Bounds3& b1, const Bounds3& b2)

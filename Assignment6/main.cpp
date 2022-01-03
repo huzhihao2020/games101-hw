@@ -13,12 +13,12 @@ int main(int argc, char** argv)
 {
     Scene scene(1280, 960);
 
-    MeshTriangle bunny("../models/bunny/bunny.obj");
+    MeshTriangle bunny("/Users/lance/code/GitHub/games101-hw/Assignment6/models/bunny/bunny.obj");
 
     scene.Add(&bunny);
     scene.Add(std::make_unique<Light>(Vector3f(-20, 70, 20), 1));
     scene.Add(std::make_unique<Light>(Vector3f(20, 70, 20), 1));
-    scene.buildBVH();
+    scene.buildBVH(); // build BVH after all the objects being loaded
 
     Renderer r;
 

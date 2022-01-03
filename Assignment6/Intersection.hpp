@@ -15,7 +15,7 @@ struct Intersection
         happened=false;
         coords=Vector3f();
         normal=Vector3f();
-        distance= std::numeric_limits<double>::max();
+        distance=std::numeric_limits<double>::max();
         obj =nullptr;
         m=nullptr;
     }

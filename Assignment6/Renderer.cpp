@@ -33,9 +33,14 @@ void Renderer::Render(const Scene& scene)
             //  vector that passes through it.
             // Also, don't forget to multiply both of them with the variable
             // *scale*, and x (horizontal) variable with the *imageAspectRatio*
-
             // Don't forget to normalize this direction!
 
+            // why * scale * imageAspectRatio?
+            // camera 的 fov 和 aspectRatio 决定了 frustum 的形状，成像平面默认为(z=-1)
+            Vector3f dir = Vector3f(x, y, -1); // Don't forget to normalize this direction!
+            dir = normalize(dir);
+            Ray eye2pixel(eye_pos, dir, 0.0f);
+            framebuffer[m++] = scene.castRay(eye2pixel, 0);
         }
         UpdateProgress(j / (float)scene.height);
     }
