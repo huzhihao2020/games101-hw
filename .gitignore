@@ -19,4 +19,4 @@ unfinished/
 .vscode/
 
 # other
-*.DS_Store
+.DS_Store
