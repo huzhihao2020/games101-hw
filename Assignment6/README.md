@@ -1,6 +1,7 @@
 I've finished task ...
 
-* 
+* BVH
+* SAH
 
 Bonus
 

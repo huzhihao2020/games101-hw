@@ -314,9 +314,9 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                 std::tie(alpha, beta, gamma) = computeBarycentric2D(i, j, t.v);
 
 
-                std::cout<< "alpha: "<< alpha << " " << alpha1 << std::endl;
-                std::cout<< "beta: "<< beta << " " << beta1 << std::endl;
-                std::cout<< "gamma: "<< gamma << " " << gamma1 << std::endl;
+                // std::cout<< "alpha: "<< alpha << " " << alpha1 << std::endl;
+                // std::cout<< "beta: "<< beta << " " << beta1 << std::endl;
+                // std::cout<< "gamma: "<< gamma << " " << gamma1 << std::endl;
 
                 // 框架的问题：根据论文，这里的v[i].w()应该表示视空间的深度z，但是这里的w恒设为了1，而且此时的t.v已经经过了mvp变换，是压缩后的投影空间，有误差
                 float w_reciprocal = 1.0/(alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
